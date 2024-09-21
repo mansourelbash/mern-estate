@@ -24,7 +24,7 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [contact, setContact] = useState(false);
+  const [contact, setContact] = useState(true);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -144,7 +144,7 @@ export default function Listing() {
                 Contact landlord
               </button>
             )}
-            {contact && <Contact listing={listing} />}
+            {contact && <Contact listing={listing} currentUser={currentUser} />}
           </div>
         </div>
       )}

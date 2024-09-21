@@ -18,6 +18,7 @@ import {
 } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Messages from '../components/Messages';
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -226,6 +227,7 @@ export default function Profile() {
           Create Listing
         </Link>
       </form>
+      <Messages currentUser={currentUser} />
       <div className='flex justify-between mt-5'>
         <span
           onClick={handleDeleteUser}

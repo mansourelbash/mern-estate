@@ -57,6 +57,11 @@ export default function Header() {
               About
             </li>
           </Link>
+          <Link to='/messages'>
+            <li className='hidden sm:inline text-slate-700 hover:underline'>
+              Messages
+            </li>
+          </Link>
           <Link to='/profile'>
             {currentUser ? (
               <img

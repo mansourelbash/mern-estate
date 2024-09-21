@@ -5,3 +5,59 @@
 body{
     background-color: rgb(241, 245, 241);
 }
+
+.chat-box {
+    max-height: 400px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    max-width: 80%;
+  }
+  
+  .sent {
+    background-color: #d1e7dd;
+    text-align: right;
+    align-self: flex-end;
+  }
+  
+  .received {
+    background-color: #f8d7da;
+    text-align: left;
+    align-self: flex-start;
+  }
+  
+  input[type='text'] {
+    width: calc(100% - 70px);
+    padding: 10px;
+    margin-right: 10px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .sent {
+    background-color: #e0f7fa; /* Light blue for sent messages */
+  }
+  
+  .received {
+    background-color: #ffecb3; /* Light yellow for received messages */
+  }
+  
