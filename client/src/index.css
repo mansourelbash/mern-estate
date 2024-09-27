@@ -61,3 +61,13 @@ body{
     background-color: #ffecb3; /* Light yellow for received messages */
   }
   
+  /* html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; 
+  }
+  
+  main {
+    height: 100%;
+  } */

@@ -12,16 +12,22 @@ import Listing from './pages/Listing';
 import Search from './pages/Search';
 import ImageSearch from './pages/ImageSearch';
 import MessagesPage from './pages/MessagesPage';
-
+import MapInit from './pages/MapInit';
+import SideBar from './components/sidebar/Sidebar'
 export default function App() {
   return (
     <BrowserRouter>
       <Header />
+      <div className=" absolute z-20 side-bar-z-index-custom">
+      <SideBar />
+        </div>
+
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<MapInit />} />
         <Route path='/sign-in' element={<SignIn />} />
         <Route path='/sign-up' element={<SignUp />} />
         <Route path='/messages' element={<MessagesPage />} />
+        <Route path='/home' element={<Home />} />
 
         <Route path='/about' element={<About />} />
         <Route path='/search' element={<Search />} />

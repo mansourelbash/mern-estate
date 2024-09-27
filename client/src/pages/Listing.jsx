@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { useSelector } from 'react-redux';
-import { Navigation } from 'swiper/modules';
+// import { Navigation } from 'swiper/modules';
 import 'swiper/css/bundle';
 import {
   FaBath,
@@ -25,14 +25,37 @@ export default function Listing() {
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [contact, setContact] = useState(true);
+  const [createdUser, setCreatedUser] = useState(true);
+  const [createItemUser, setCreateItemUser] = useState(null);
   const params = useParams();
-  const { currentUser } = useSelector((state) => state.user);
 
+  const { currentUser } = useSelector((state) => state.user);
+  useEffect(() => {
+    const fetchCreateItemUser = async () => {
+      if (listing) { // Check if listing and userRef are available
+        try {
+          const response = await fetch(`/api/user/${listing.userRef}`);
+          console.log(response)
+          if (!response.ok) {
+            throw new Error('Failed to fetch user');
+          }
+          const data = await response.json();
+          setCreateItemUser(data); // Correctly set the state variable
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+
+    fetchCreateItemUser();
+  }, [createdUser]);
   useEffect(() => {
     const fetchListing = async () => {
       try {
         setLoading(true);
         const res = await fetch(`/api/listing/get/${params.listingId}`);
+        console.log(res)
+
         const data = await res.json();
         if (data.success === false) {
           setError(true);
@@ -40,6 +63,7 @@ export default function Listing() {
           return;
         }
         setListing(data);
+        setCreatedUser(listing.userRef)
         setLoading(false);
         setError(false);
       } catch (error) {
@@ -56,10 +80,10 @@ export default function Listing() {
       {error && (
         <p className='text-center my-7 text-2xl'>Something went wrong!</p>
       )}
-      {listing && !loading && !error && (
+      {listing && (
         <div>
-          <Swiper navigation>
-            {listing.imageUrls.map((url) => (
+          {/* <Swiper navigation>
+            {listing?.imageUrls?.map((url) => (
               <SwiperSlide key={url}>
                 <div
                   className='h-[550px]'
@@ -70,7 +94,7 @@ export default function Listing() {
                 ></div>
               </SwiperSlide>
             ))}
-          </Swiper>
+          </Swiper> */}
           <div className='fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer'>
             <FaShare
               className='text-slate-500'
@@ -90,6 +114,8 @@ export default function Listing() {
           )}
           <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
             <p className='text-2xl font-semibold'>
+            <h1>{createItemUser?.username}</h1>
+
               {listing.name} - ${' '}
               {listing.offer
                 ? listing.discountPrice.toLocaleString('en-US')
