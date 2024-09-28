@@ -9,6 +9,8 @@ import path from 'path';
 import http from 'http'; // Import to create server for socket.io
 import { Server } from 'socket.io'; // Import Socket.IO
 import chatRouter from './routes/chat.route.js';
+const cors = require('cors'); // Enable CORS if necessary
+app.use(cors()); // Allow cross-origin requests
 
 dotenv.config();
 
@@ -78,6 +80,37 @@ app.use(express.static(path.join(__dirname, '/client/dist')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
+
+app.get('/proxy', async (req, res) => {
+  const { bbox } = req.query; // Extract bbox from the query parameters
+
+  try {
+    const response = await axios.get('https://maps.dls.gov.jo/arcgis/rest/services/DLS/DLS_Cassini/MapServer/export', {
+      params: {
+        bbox: bbox,
+        bboxSR: 102100,
+        imageSR: 102100,
+        size: '1280,352',
+        dpi: 96,
+        format: 'png32',
+        transparent: true,
+        layers: 'show:0,1,2,6',
+        f: 'image',
+      },
+      headers: {
+        'Referer': 'https://maps.dls.gov.jo/dlsweb/index.html', // Add the Referer header
+      },
+    });
+
+    // Set the content type and send the image data
+    console.log('Response Data:', response.data);
+
+    res.set('Content-Type', 'image/png');
+    res.send(response.data);
+  } catch (error) {
+    res.status(500).send('Error fetching image');
+  }
 });
 
 // Error handling middleware

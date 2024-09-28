@@ -21,6 +21,7 @@
     "framer-motion": "^11.8.0",
     "iconsax-react": "^0.0.8",
     "mapbox-gl": "^3.6.0",
+    "proj4": "^2.12.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
