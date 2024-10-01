@@ -41,7 +41,6 @@ body{
   
   button {
     padding: 10px 20px;
-    background-color: #0d6efd;
     color: white;
     border: none;
     cursor: pointer;
@@ -71,3 +70,7 @@ body{
   main {
     height: 100%;
   } */
+
+  .mapboxgl-ctrl-top-right{
+    z-index: 333;
+  }

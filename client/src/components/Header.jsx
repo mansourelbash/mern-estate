@@ -36,49 +36,7 @@ export default function Header() {
         <Link className="flex-auto my-auto" to='/'>    M2M SIMs </Link>
       </div>
 
-      <div className="flex gap-4 items-center self-stretch text-xs font-bold leading-5 max-md:flex-wrap">
-        <div className="flex gap-3 justify-center self-stretch p-1 bg-white rounded-xl">
-          <div className="flex gap-1 justify-center my-auto whitespace-nowrap text-zinc-950">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/422fd0a550aba2126c4e03b0e92593b1cb5c6ce4f0720f1dc02a098e382a628d?apiKey=b22f6bf7f4034411b849e40a81909ff7&"
-              alt="Layers Icon"
-              className="shrink-0 w-5 aspect-square"
-            />
-            <div>Layers</div>
-          </div>
-          <div className="flex flex-auto gap-1 justify-center p-1 text-white rounded-xl">
-            
-          </div>
-        </div>
-        <div className="shrink-0 self-stretch my-auto w-px h-8 border border-solid bg-neutral-900 bg-opacity-10 border-neutral-900 border-opacity-10" />
-        <div className="flex gap-1 justify-center self-stretch p-1 my-auto text-white whitespace-nowrap rounded-xl">
-          <Button
-            className="h-[32px] mt-[1px] rounded-lg"
-            color={true ? "primary" : "default"}
-    
-          >
-            <LocationTick
-              size={18}
-              variant="Bulk"
-              color={true ? "#fff" : "#040506"}
-            />
-            <label className="text-[12px]">Legend</label>
-          </Button>
-          <Button
-            className="h-[32px] mt-[1px] rounded-lg"
-            color={true ? "primary" : "default"}
-         
-          >
-            <Element3
-              size={18}
-              variant="Bulk"
-              color={true ? "#fff" : "#040506"}
-            />
-            <label className="text-[12px]">Widgets</label>
-          </Button>
-        </div>
-      </div>
-      <ul className='flex gap-4'>
+      {/* <ul className='flex gap-4'>
           <Link to='/Map'>
             <li className='hidden sm:inline text-slate-700 hover:underline'>
               Map
@@ -110,10 +68,10 @@ export default function Header() {
               <li className=' text-slate-700 hover:underline'> Sign in</li>
             )}
           </Link>
-        </ul>
+        </ul> */}
         <form
           onSubmit={handleSubmit}
-          className='bg-slate-100 p-3 rounded-lg flex items-center'
+          className='bg-slate-100 m-2 rounded-lg flex items-center'
         >
           <input
             type='text'

@@ -2,15 +2,18 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Map, { Source, Layer } from 'react-map-gl';
 import { Popups } from '../components/Popups'; // Importing the Popups component
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { polygonData } from '../data/dummy';
+import { polygonData as initialPolygonData } from '../data/dummy';
 import proj4 from 'proj4';
+import MapboxDraw from '@mapbox/mapbox-gl-draw'; 
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'; 
+import ModalDetails from '../components/ModalDetails';
 
 const mapBoxAccessKey = import.meta.env.VITE_REACT_APP_MAPBOX_API;
 
 const dataToGeoJSON = (polygons) => {
   return {
     type: 'FeatureCollection',
-    features: polygonData.map((polygon) => ({
+    features: polygons.map((polygon) => ({
       type: 'Feature',
       properties: {
         id: polygon.id,
@@ -46,14 +49,91 @@ const MapInit = () => {
   const [hoveredPolygon, setHoveredPolygon] = useState(null);
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/light-v11');
   const [currentPolygonIndex, setCurrentPolygonIndex] = useState(0);
+  const [polygonData, setPolygonData] = useState(initialPolygonData);
+  const [selectedPolygon, setSelectedPolygon] = useState(null);
+  const [allPolygon, setAllPolygon] = useState(null);
+
   const [bbox, setBbox] = useState(null);
   const mapRef = useRef(null);
+  const drawRef = useRef(null); // To persist the draw instance
+
   proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs"); // WGS84 (latitude/longitude)
   proj4.defs("EPSG:3857", "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"); // Web Mercator
 
   const handleThemeChange = (event) => {
     setMapStyle(event.target.value);
   };
+
+  useEffect(() => {
+    // Load polygon data from local storage if available
+    const savedPolygons = localStorage.getItem('polygons');
+    console.log(polygonData,'savedPolygons')
+    if (savedPolygons) {
+      setPolygonData(JSON.parse(savedPolygons));
+    } else {
+      // Initialize with initial data if no saved data
+      setPolygonData(savedPolygons);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('polygons', JSON.stringify(polygonData));
+  }, [polygonData]);
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+
+    if (map) {
+      // Initialize the Draw tool
+      const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+          polygon: true,
+          line_string: true,
+          point: true,
+          trash: true,
+        },
+      });
+
+      drawRef.current = draw; // Store reference to Draw tool
+      map.addControl(draw, 'top-right'); // Add Draw control to the map
+
+
+      map.on('draw.update', (event) => {
+        console.log('Feature updated:', event.features);
+      });
+
+      map.on('draw.delete', (event) => {
+        console.log('Feature deleted:', event.features);
+      });
+
+      map.on('draw.create', (event) => {
+        const newPolygon = event.features[0];
+        const userConfirmed = window.confirm('Do you want to save this polygon?');
+        if (userConfirmed) {
+          const newPolygonData = {
+            id: newPolygon.id,
+            color: '#FF0000', // Example color
+            borderColor: '#000000', // Example border color
+            coordinates: newPolygon.geometry.coordinates,
+          };
+          setAllPolygon(newPolygon.geometry.coordinates)
+          setPolygonData((prevData) => [...prevData, newPolygonData]);
+          console.log('Feature created:', event.features);
+
+        }
+      });
+
+
+      return () => {
+        // Cleanup the Draw control when the component unmounts
+        if (drawRef.current) {
+          map.removeControl(drawRef.current);
+          drawRef.current = null; // Reset drawRef
+        }
+      };
+    }
+  }, [mapRef]); // Only run when mapRef changes
 
   const handleMapHover = useCallback((event) => {
     const features = event?.features;
@@ -69,13 +149,13 @@ const MapInit = () => {
     }
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPolygonIndex((prevIndex) => (prevIndex + 1) % polygonData.length);
-    }, 3000); // Change the polygon every 3 seconds
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentPolygonIndex((prevIndex) => (prevIndex + 1) % polygonData.length);
+  //   }, 3000); // Change the polygon every 3 seconds
 
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []);
+  //   return () => clearInterval(interval); // Cleanup interval on component unmount
+  // }, []);
 
   const getBoundingBox = () => {
     const map = mapRef.current?.getMap();
@@ -143,6 +223,35 @@ const MapInit = () => {
     };
   }, [mapRef]);
 
+
+  const handlePolygonClick = (event) => {
+    const clickedFeature = event.features[0];
+    console.log(clickedFeature,'clickedFeature')
+    if (clickedFeature && clickedFeature.layer.id === 'polygons-layer') {
+      const polygonId = clickedFeature.properties.id;
+      const coordinates = clickedFeature._geometry.coordinates;
+      setSelectedPolygon({ id: polygonId, coordinates });
+      openModal();
+    }
+  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleDelete = () => {
+    if (selectedPolygon) {
+      const updatedPolygons = polygonData.filter(polygon => polygon.id !== selectedPolygon.id);
+      setPolygonData(updatedPolygons);
+      console.log(`Polygon with ID ${selectedPolygon.id} deleted.`);
+      closeModal(); // Close the modal after deletion
+    }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   const dynamicUrl = createDynamicUrl();
 
   console.log(dynamicUrl, 'dynamicUrldynamicUrldynamicUrl');
@@ -179,23 +288,13 @@ const MapInit = () => {
         }}
         style={{ width: '100%', height: '100%' }}
         mapStyle={mapStyle}
+
         interactiveLayerIds={['polygons-layer']}
         onMouseMove={handleMapHover}
+
+        onClick={handlePolygonClick} // Attach the click handler here
       >
-        <Source
-          id="arcgis-layer"
-          type="image"
-          url={`http://localhost:3000/proxy?bbox=${bbox || ''}`}
-          coordinates={[
-            [34.955417, 29.197495], // Southwest corner
-            [38.993572, 29.197495], // Southeast corner
-            [38.993572, 33.378686], // Northeast corner
-            [34.955417, 33.378686], // Northwest corner
-          ]}
-        />
-
-
-        <Source id="polygons-source" type="geojson" data={dataToGeoJSON([polygonData[currentPolygonIndex]])}>
+        <Source id="polygons" type="geojson" data={dataToGeoJSON(polygonData)}>
           <Layer {...polygonLayerStyle} />
         </Source>
 
@@ -206,7 +305,16 @@ const MapInit = () => {
             accountStatus={hoveredPolygon.accountStatus}
           />
         )}
+
       </Map>
+      {isModalOpen && (
+        <ModalDetails 
+          onDelete={handleDelete} 
+          closeModal={closeModal} 
+          polygonId={selectedPolygon?.id}
+          polygonData={selectedPolygon} // Pass the selected polygon ID to the modal
+        />
+      )}
     </div>
   );
 };

@@ -2,8 +2,14 @@ import {
   FolderCloud,
   ForwardItem,
   Home,
+  Home2,
+  Home3,
+  Information,
   Logout,
   Map,
+  Map1,
+  Message,
+  Message2,
   More,
   Setting2,
   Shuffle,
@@ -27,6 +33,7 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { FaSign, FaSignInAlt } from "react-icons/fa";
 
 type Theme = "light" | "dark";
 
@@ -203,21 +210,47 @@ const SideBar: React.FC = () => {
             <div className="flex justify-center items-center bg-white mx-[7px] rounded-small pt-[4px]">
               <Menu menuItemStyles={menuItemStyles} className="items-center w-full">
                 <MenuItem
-                  component={<Link to="/home/map" />}
-                  icon={activeItem === 'home' ? <Map color="#006FEE" variant="Bulk" size={20} /> : <Map color="#001731" variant="Bulk" size={20} />}
+                  component={<Link to="/" />}
+                  icon={activeItem === 'home' ? <Map1 color="#006FEE" variant="Bulk" size={20} /> : <Map1 color="#001731" variant="Bulk" size={20} />}
                   active={activeItem === 'home'}
                   onClick={handleItemClick('home')}
                 >
                   Home
                 </MenuItem>
                 <MenuItem
-                  component={<Link to="/home/assetManagement" />}
-                  icon={activeItem === 'assets' ? <ForwardItem color="#006FEE" variant="Bulk" size={20} /> : <ForwardItem color="#001731" variant="Bulk" size={20} />}
+                  component={<Link to="/home" />}
+                  icon={activeItem === 'assets' ? <Home3 color="#006FEE" variant="Bulk" size={20} /> : <Home2 color="#001731" variant="Bulk" size={20} />}
                   active={activeItem === 'assets'}
                   onClick={handleItemClick('assets')}
                 >
                   SIMs
                 </MenuItem>
+                <MenuItem
+                  component={<Link to="/Messages" />}
+                  icon={activeItem === 'Messages' ? <Message2 color="#006FEE" variant="Bulk" size={20} /> : <Message color="#001731" variant="Bulk" size={20} />}
+                  active={activeItem === 'Messages'}
+                  onClick={handleItemClick('Messages')}
+                >
+                  Messages
+                </MenuItem>
+                     <MenuItem
+                  component={<Link to="/About" />}
+                  icon={activeItem === 'About' ? <Information color="#006FEE" variant="Bulk" size={20} /> : <Information color="#001731" variant="Bulk" size={20} />}
+                  active={activeItem === 'About'}
+                  onClick={handleItemClick('About')}
+                >
+                  About
+                </MenuItem>
+                <MenuItem
+                  component={<Link to="/sign-in" />}
+                  icon={activeItem === 'SignIn' ? <FaSignInAlt color="#006FEE" variant="Bulk" size={20} /> : <FaSignInAlt color="#001731" variant="Bulk" size={20} />}
+                  active={activeItem === 'SignIn'}
+                  onClick={handleItemClick('SignIn')}
+                >
+                  SignIn
+                </MenuItem>
+
+           
               </Menu>
             </div>
             <div>
