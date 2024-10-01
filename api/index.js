@@ -9,8 +9,6 @@ import path from 'path';
 import http from 'http'; // Import to create server for socket.io
 import { Server } from 'socket.io'; // Import Socket.IO
 import chatRouter from './routes/chat.route.js';
-const cors = require('cors'); // Enable CORS if necessary
-app.use(cors()); // Allow cross-origin requests
 
 dotenv.config();
 
